@@ -1,0 +1,5 @@
+F:\program\TestDemo\TestTuple\bin\Debug\TestTuple.exe.config
+F:\program\TestDemo\TestTuple\bin\Debug\TestTuple.exe
+F:\program\TestDemo\TestTuple\bin\Debug\TestTuple.pdb
+F:\program\TestDemo\TestTuple\obj\Debug\TestTuple.exe
+F:\program\TestDemo\TestTuple\obj\Debug\TestTuple.pdb

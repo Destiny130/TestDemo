@@ -1,0 +1,5 @@
+F:\program\TestDemo\TestForeach\bin\Debug\TestForeach.exe.config
+F:\program\TestDemo\TestForeach\bin\Debug\TestForeach.exe
+F:\program\TestDemo\TestForeach\bin\Debug\TestForeach.pdb
+F:\program\TestDemo\TestForeach\obj\Debug\TestForeach.exe
+F:\program\TestDemo\TestForeach\obj\Debug\TestForeach.pdb
