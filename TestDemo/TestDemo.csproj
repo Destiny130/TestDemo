@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EB89880C-21D3-417C-A644-B25ED001EE19}</ProjectGuid>
+    <ProjectGuid>{F55596AC-B66C-4C40-909B-87BFBD9EC7A4}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>TestTuple</RootNamespace>
-    <AssemblyName>TestTuple</AssemblyName>
+    <RootNamespace>TestDemo</RootNamespace>
+    <AssemblyName>TestDemo</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -42,7 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TupleTest.cs" />
+    <Compile Include="Execute.cs" />
+    <Compile Include="FunctionTest\ForeachTest.cs" />
+    <Compile Include="FunctionTest\TupleTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
