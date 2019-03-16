@@ -1,5 +1,6 @@
 ﻿using System;
 using TestDemo.FunctionTest;
+using TestDemo.EfficiencyTest;
 
 namespace TestDemo
 {
@@ -7,9 +8,9 @@ namespace TestDemo
     {
         static void Main(string[] args)
         {
-            ForeachTest.Execute();
-            TupleTest.Execute();
-
+            //new ForeachTest().Execute();
+            //new TupleTest().Execute();
+            new ToCharArrayAndElementAt().Execute();
 
             Console.ReadKey();
         }

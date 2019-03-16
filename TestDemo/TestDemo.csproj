@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EfficiencyTest\ToCharArrayAndElementAt.cs" />
     <Compile Include="Execute.cs" />
     <Compile Include="FunctionTest\ForeachTest.cs" />
     <Compile Include="FunctionTest\TupleTest.cs" />

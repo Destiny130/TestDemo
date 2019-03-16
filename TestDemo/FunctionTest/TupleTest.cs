@@ -5,7 +5,7 @@ namespace TestDemo.FunctionTest
 {
     public class TupleTest
     {
-        public static void Execute()
+        public void Execute()
         {
             Tuple<List<int>, List<string>> tuple = new Tuple<List<int>, List<string>>(new List<int>() { 1, 2 }, new List<string>() { "1", "2" });
             //tuple.Item1 = new List<int>();  //Compile error
