@@ -1,6 +1,7 @@
 ﻿using System;
 using TestDemo.FunctionTest;
 using TestDemo.EfficiencyTest;
+using TestDemo.ThirdPartyLibraryTest;
 
 namespace TestDemo
 {
@@ -10,7 +11,8 @@ namespace TestDemo
         {
             //new ForeachTest().Execute();
             //new TupleTest().Execute();
-            new ToCharArrayAndElementAt().Execute();
+            //new ToCharArrayAndElementAt().Execute();
+            new SvgToImage().Execute();
 
             Console.ReadKey();
         }
