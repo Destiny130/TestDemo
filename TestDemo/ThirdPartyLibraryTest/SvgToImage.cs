@@ -1,12 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Drawing;
-using Svg;
 using System.Drawing.Imaging;
+using System.IO;
+using Svg;
 
 namespace TestDemo.ThirdPartyLibraryTest
 {
@@ -29,6 +27,11 @@ namespace TestDemo.ThirdPartyLibraryTest
 
         private void Single(Dictionary<string, string> dic)
         {
+            string storePath = @"../../../Output/SvgToImage/";
+            if (!Directory.Exists(storePath))
+            {
+                Directory.CreateDirectory(storePath);
+            }
             foreach (var pair in dic)
             {
                 try
@@ -37,19 +40,19 @@ namespace TestDemo.ThirdPartyLibraryTest
                     xmlDoc.LoadXml(pair.Value);
                     SvgDocument svgDoc = SvgDocument.Open(xmlDoc);
 
-                    //var bitmap = svgDoc.Draw();
+                    //Bitmap bitmap = svgDoc.Draw();
 
-                    //If image is black, using follow method
-                    SizeF size = svgDoc.GetDimensions();
-                    Bitmap blank = new Bitmap((int)Math.Ceiling(size.Width), (int)Math.Ceiling(size.Height));
-                    Console.WriteLine($"{pair.Key}, width: {(int)Math.Ceiling(size.Width)}, height: {(int)Math.Ceiling(size.Height)}");
+                    //If image is black, using follow method, or save it as png format
+                    SizeF sizeF = svgDoc.GetDimensions();
+                    Size size = new Size((int)(Math.Ceiling(sizeF.Width)), (int)(Math.Ceiling(sizeF.Height)));
+                    Bitmap blank = new Bitmap(size.Width, size.Height);
                     Graphics g = Graphics.FromImage(blank);
                     g.Clear(Color.White);
                     g.DrawImage(svgDoc.Draw(), new PointF(0, 0));
                     Bitmap bitmap = new Bitmap(blank);
                     blank.Dispose();
 
-                    bitmap.Save($"C:\\Debug\\test_{pair.Key}.jpg", ImageFormat.Jpeg);
+                    bitmap.Save($"{storePath}test_{pair.Key}.jpg", ImageFormat.Jpeg);
                 }
                 catch (Exception ex)
                 {
