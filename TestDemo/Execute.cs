@@ -12,7 +12,9 @@ namespace TestDemo
             //new ForeachTest().Execute();
             //new TupleTest().Execute();
             //new ToCharArrayAndElementAt().Execute();
-            new SvgToImage().Execute();
+            //new SvgToImage_Svg().Start();
+            new HtmlToPdf_HtmlRenderer().Start();
+
 
             Console.ReadKey();
         }
