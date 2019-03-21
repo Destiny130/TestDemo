@@ -63,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EfficiencyTest\SubstringAndNewStringFromCharArray.cs" />
     <Compile Include="EfficiencyTest\ToCharArrayAndElementAt.cs" />
     <Compile Include="Execute.cs" />
     <Compile Include="FunctionTest\ForeachTest.cs" />

@@ -11,7 +11,7 @@ namespace TestDemo.ThirdPartyLibraryTest
 {
     public class HtmlToPdf_HtmlRenderer
     {
-        const string outputPath = "../../../Output/HtmlToPdf/";
+        const string outputPath = "../../../Output/HtmlToPdf HtmlRenderer/";
 
         public HtmlToPdf_HtmlRenderer()
         {

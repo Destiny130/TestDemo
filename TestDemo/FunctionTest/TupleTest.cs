@@ -17,6 +17,15 @@ namespace TestDemo.FunctionTest
             strList.Add("3");
             Console.WriteLine($"Item1: {String.Join(", ", tuple.Item1)}");
             Console.WriteLine($"Item2: {String.Join(", ", tuple.Item2)}");
+
+            Tuple<int, int> t1 = new Tuple<int, int>(1, 2);
+            Tuple<int, int> t2 = new Tuple<int, int>(1, 2);
+            Console.WriteLine($"int ==: {t1 == t2}, equals: {t1.Equals(t2)}");
+
+            Tuple<string, string> t3 = new Tuple<string, string>("1", "2");
+            Tuple<string, string> t4 = new Tuple<string, string>("1", "2");
+            Console.WriteLine($"string ==: {t3 == t4}, equals: {t3.Equals(t4)}");
+
             Console.WriteLine("\n");
         }
     }
