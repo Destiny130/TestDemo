@@ -9,11 +9,26 @@ namespace TestDemo
     {
         static void Main(string[] args)
         {
+            #region Function Test
+
             //new ForeachTest().Execute();
             //new TupleTest().Execute();
+            new GetHashCodeTest().Execute();
+
+            #endregion
+
+            #region Efficiency Test
+
             //new ToCharArrayAndElementAt().Execute();
-            //new SvgToImage_Svg().Start();
-            new HtmlToPdf_HtmlRenderer().Start();
+            //new SubstringAndNewStringFromCharArray().Execute();
+
+            #endregion
+
+            #region Third Party Library Test
+
+            //new SvgToImage().Execute();
+
+            #endregion
 
             Console.ReadKey();
         }
