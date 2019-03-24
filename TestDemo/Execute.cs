@@ -13,7 +13,7 @@ namespace TestDemo
 
             //new ForeachTest().Execute();
             //new TupleTest().Execute();
-            new GetHashCodeTest().Execute();
+            //new GetHashCodeTest().Execute();
 
             #endregion
 
@@ -21,6 +21,7 @@ namespace TestDemo
 
             //new ToCharArrayAndElementAt().Execute();
             //new SubstringAndNewStringFromCharArray().Execute();
+            //new ContainsAndIndexOf().Execute();
 
             #endregion
 

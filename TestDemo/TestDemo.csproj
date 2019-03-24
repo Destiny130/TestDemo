@@ -63,10 +63,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EfficiencyTest\ContainsAndIndexOf.cs" />
     <Compile Include="EfficiencyTest\SubstringAndNewStringFromCharArray.cs" />
     <Compile Include="EfficiencyTest\ToCharArrayAndElementAt.cs" />
     <Compile Include="Execute.cs" />
     <Compile Include="FunctionTest\ForeachTest.cs" />
+    <Compile Include="FunctionTest\GetHashCodeTest.cs" />
     <Compile Include="FunctionTest\TupleTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ThirdPartyLibraryTest\HtmlToPdf_HtmlRenderer.cs" />
