@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EfficiencyTest\ContainsAndIndexOf.cs" />
+    <Compile Include="EfficiencyTest\ForEachAndForeach.cs" />
     <Compile Include="EfficiencyTest\SubstringAndNewStringFromCharArray.cs" />
     <Compile Include="EfficiencyTest\ToCharArrayAndElementAt.cs" />
     <Compile Include="Execute.cs" />
