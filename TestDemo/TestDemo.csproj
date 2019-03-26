@@ -69,6 +69,7 @@
     <Compile Include="EfficiencyTest\ToCharArrayAndElementAt.cs" />
     <Compile Include="Execute.cs" />
     <Compile Include="FunctionTest\ForeachTest.cs" />
+    <Compile Include="FunctionTest\GetEnumeratorTest.cs" />
     <Compile Include="FunctionTest\GetHashCodeTest.cs" />
     <Compile Include="FunctionTest\TupleTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
