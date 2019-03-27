@@ -2,6 +2,7 @@
 using TestDemo.FunctionTest;
 using TestDemo.EfficiencyTest;
 using TestDemo.ThirdPartyLibraryTest;
+using System.Windows.Forms;
 
 namespace TestDemo
 {
@@ -14,6 +15,7 @@ namespace TestDemo
             //new ForeachTest().Execute();
             //new TupleTest().Execute();
             //new GetHashCodeTest().Execute();
+            Application.Run(new AsyncForm());
 
             #endregion
 
