@@ -68,6 +68,7 @@
     <Compile Include="EfficiencyTest\SubstringAndNewStringFromCharArray.cs" />
     <Compile Include="EfficiencyTest\ToCharArrayAndElementAt.cs" />
     <Compile Include="Execute.cs" />
+    <Compile Include="FunctionTest\AsyncExecute.cs" />
     <Compile Include="FunctionTest\AsyncForm.cs">
       <SubType>Form</SubType>
     </Compile>

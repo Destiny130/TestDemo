@@ -15,7 +15,8 @@ namespace TestDemo
             //new ForeachTest().Execute();
             //new TupleTest().Execute();
             //new GetHashCodeTest().Execute();
-            Application.Run(new AsyncForm());
+            //Application.Run(new AsyncForm());
+            new AsyncExecute().Execute();
 
             #endregion
 
