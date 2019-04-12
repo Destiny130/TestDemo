@@ -28,10 +28,13 @@ namespace TestDemo.FunctionTest
             {
                 //string text = await client.GetStringAsync("https://auth.alipay.com/login/index.htm");
 
-                Task<string> task = client.GetStringAsync("https://auth.alipay.com/login/index.htm");  //Start wait
-                string text = await task;
+                //Task<string> task = client.GetStringAsync("https://auth.alipay.com/login/index.htm");  //Start wait
+                //string text = await task;
 
-                label.Text = text.Length.ToString();
+                Task<string> task = Task.Run(() => client.GetStringAsync("https://auth.alipay.com/login/index.htm"));
+                string text = await task;  //Start wait
+
+                label.Text = text.Length.ToString() + " " + text;
             }
         }
     }
