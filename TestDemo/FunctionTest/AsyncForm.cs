@@ -13,7 +13,7 @@ namespace TestDemo.FunctionTest
 
         public AsyncForm()
         {
-            label = new Label() { Location = new Point(10, 20), Text = "Lenngth" };
+            label = new Label() { Location = new Point(10, 20), Height = 40, Text = "Length" };
             button = new Button() { Location = new Point(10, 50), Text = "Click" };
             button.Click += DisplayWebSiteLength;
             AutoSize = true;
