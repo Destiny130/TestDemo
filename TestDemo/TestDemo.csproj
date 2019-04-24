@@ -67,6 +67,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EfficiencyTest\BitwiseSumAndSystemSum.cs" />
     <Compile Include="EfficiencyTest\ContainsAndIndexOf.cs" />
     <Compile Include="EfficiencyTest\ForEachAndForeach.cs" />
     <Compile Include="EfficiencyTest\SubstringAndNewStringFromCharArray.cs" />
@@ -79,7 +80,9 @@
     <Compile Include="FunctionTest\ForeachTest.cs" />
     <Compile Include="FunctionTest\GetEnumeratorTest.cs" />
     <Compile Include="FunctionTest\GetHashCodeTest.cs" />
+    <Compile Include="FunctionTest\ThreadTest.cs" />
     <Compile Include="FunctionTest\TupleTest.cs" />
+    <Compile Include="FunctionTest\XmlWriteWithMemoryStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ThirdPartyLibraryTest\HtmlToPdf_HtmlRenderer.cs" />
     <Compile Include="ThirdPartyLibraryTest\SvgToImage_Svg.cs" />
