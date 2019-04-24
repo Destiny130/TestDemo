@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using TestDemo.FunctionTest;
 using TestDemo.EfficiencyTest;
 using TestDemo.ThirdPartyLibraryTest;
@@ -16,7 +16,9 @@ namespace TestDemo
             //new TupleTest().Execute();
             //new GetHashCodeTest().Execute();
             //Application.Run(new AsyncForm());
-            new AsyncExecute().Execute();
+            //new AsyncExecute().Execute();
+            //new XmlWriteWithMemoryStream().Execute();
+            new ThreadTest().Start();
 
             #endregion
 
@@ -25,12 +27,13 @@ namespace TestDemo
             //new ToCharArrayAndElementAt().Execute();
             //new SubstringAndNewStringFromCharArray().Execute();
             //new ContainsAndIndexOf().Execute();
+            //new BitwiseSumAndSystemSum().Execute();
 
             #endregion
 
             #region Third Party Library Test
 
-            //new SvgToImage().Execute();
+            //new SvgToImage_Svg().Start();
 
             #endregion
 
