@@ -21,6 +21,10 @@ namespace TestDemo.FunctionTest
 
             //ThreadSuspendAndResume();
 
+            //ThreadPoolTest();
+
+            AsyncResultTest();
+
             //Console.WriteLine($"ThreadTest end\n");
         }
 
@@ -28,20 +32,20 @@ namespace TestDemo.FunctionTest
 
         void ConstructorTest()
         {
-            Thread thread = new Thread(new ThreadStart(ThreadMethod));
-            Thread threadWithPara = new Thread(new ParameterizedThreadStart(ThreadMethodWithPara));
+            Thread thread = new Thread(ThreadMethod);
+            Thread threadWithPara = new Thread(ThreadMethodWithPara);
             thread.Start();
-            threadWithPara.Start("This is a string parameter");
+            threadWithPara.Start("dummy parameter");
         }
 
         void ThreadMethod()
         {
-            Console.WriteLine($"ThreadId: {Thread.CurrentThread.ManagedThreadId}");
+            Console.WriteLine($"ThreadId: {currThreadId()}");
         }
 
         void ThreadMethodWithPara(object obj)
         {
-            Console.WriteLine($"ThreadId: {Thread.CurrentThread.ManagedThreadId}, parameter: {obj?.ToString()}");
+            Console.WriteLine($"ThreadId: {currThreadId()}, parameter: {obj?.ToString()}");
         }
 
         #endregion Thread constructor
@@ -51,12 +55,12 @@ namespace TestDemo.FunctionTest
         void ThreadInherit()
         {
             Thread.CurrentThread.Name = "level 0 yo";
-            Console.WriteLine($"Level 0 thread name: {Thread.CurrentThread.Name}");
-            new Thread(() => Console.WriteLine($"Level 1_1 thread name: {Thread.CurrentThread.Name}")) { Name = "level 1_1 yo" }.Start();
+            Console.WriteLine($"Level 0 thread name: {currThreadName()}");
+            new Thread(() => Console.WriteLine($"Level 1_1 thread name: {currThreadName()}")) { Name = "level 1_1 yo" }.Start();
             new Thread(new ThreadStart(() =>
             {
                 Console.WriteLine($"Level 1_2 thread name: {Thread.CurrentThread.Name}");
-                new Thread(() => Console.WriteLine($"Level 2 thread name: {Thread.CurrentThread.Name}")) { Name = "level 2 yoyo" }.Start();
+                new Thread(() => Console.WriteLine($"Level 2 thread name: {currThreadName()}")) { Name = "level 2 yoyo" }.Start();
             }))
             { Name = "level 1_2 yo" }.Start();
         }
@@ -84,9 +88,9 @@ namespace TestDemo.FunctionTest
                 for (int j = 0; j < 10; ++j)
                 {
                     Thread.Sleep(600);
-                    Console.WriteLine($"Sub thread {Thread.CurrentThread.Name} is running now, {j % 10 * 10}");
+                    Console.WriteLine($"Sub thread {currThreadName()} is running now, {j % 10 * 10}%");
                 }
-                Console.WriteLine($"Sub thread {Thread.CurrentThread.Name} is done");
+                Console.WriteLine($"Sub thread {currThreadName()} is done");
             })
             { Name = $"SubThread {i.ToString()}" }).ToList();
             list.ForEach(startThenJoinAction);
@@ -105,7 +109,7 @@ namespace TestDemo.FunctionTest
             Thread.Sleep(1000);
             thread.Abort();
             thread.Join();
-            printWithTime($"Back to main thread, thread {thread.Name} state is {thread.ThreadState}\n");
+            printWithTime($"Back to main thread, thread {thread.Name} state: {thread.ThreadState}\n");
         }
 
         void Abort()
@@ -116,11 +120,11 @@ namespace TestDemo.FunctionTest
             }
             catch (Exception ex)
             {
-                printWithTime($"Thread {Thread.CurrentThread.Name} receive abort signal, thread state: {Thread.CurrentThread.ThreadState.ToString()}, in catch block. Exception: {ex.Message}");
+                printWithTime($"Thread {currThreadName()} receive abort signal, thread state: {currThreadState()}, in catch block. Exception: {ex.Message}");
             }
             finally
             {
-                printWithTime($"Thread {Thread.CurrentThread.Name} receive abort signal, thread state: {Thread.CurrentThread.ThreadState.ToString()}, in finally block");
+                printWithTime($"Thread {currThreadName()} receive abort signal, thread state: {currThreadState()}, in finally block");
             }
         }
 
@@ -136,7 +140,7 @@ namespace TestDemo.FunctionTest
             Thread.Sleep(1000);
             thread.Interrupt();
             thread.Join();
-            printWithTime($"Back to main thread, thread {thread.Name} state is {thread.ThreadState}\n");
+            printWithTime($"Back to main thread, thread {thread.Name} state: {thread.ThreadState}\n");
         }
 
         void Interrupt()
@@ -147,11 +151,11 @@ namespace TestDemo.FunctionTest
             }
             catch (Exception ex)
             {
-                printWithTime($"Thread {Thread.CurrentThread.Name} receive interrupt signal, thread state: {Thread.CurrentThread.ThreadState.ToString()}, in catch block. Exception: {ex.Message}");
+                printWithTime($"Thread {currThreadName()} receive interrupt signal, thread state: {currThreadState()}, in catch block. Exception: {ex.Message}");
             }
             finally
             {
-                printWithTime($"Thread {Thread.CurrentThread.Name} receive interrupt signal, thread state: {Thread.CurrentThread.ThreadState.ToString()}, in finally block");
+                printWithTime($"Thread {currThreadName()} receive interrupt signal, thread state: {currThreadState()}, in finally block");
             }
         }
 
@@ -174,14 +178,61 @@ namespace TestDemo.FunctionTest
 
         void Suspend()
         {
-            printWithTime($"Thread {Thread.CurrentThread.Name} has been suspended");
+            printWithTime($"Thread {currThreadName()} has been suspended");
             Thread.CurrentThread.Suspend();
-            printWithTime($"Thread {Thread.CurrentThread.Name} has been resumed");
+            printWithTime($"Thread {currThreadName()} has been resumed");
         }
 
         #endregion Thread suspend and resume
 
-        #region Func and action
+        #region Thread pool
+
+        void ThreadPoolTest()
+        {
+            printWithTime($"Main thread, id: {currThreadId()}");
+            ManualResetEvent[] resetEventArr = new ManualResetEvent[6];
+            for (int i = 0; i < 6; ++i)
+            {
+                resetEventArr[i] = new ManualResetEvent(false);
+                ThreadPool.QueueUserWorkItem(ThreadSingle, new Tuple<string, ManualResetEvent>("dummy parameter", resetEventArr[i]));
+            }
+            ManualResetEvent.WaitAll(resetEventArr);
+            printWithTime($"Back to main thread, id: {currThreadId()}");
+        }
+
+        void ThreadSingle(object obj)
+        {
+            Tuple<string, ManualResetEvent> tuple = obj as Tuple<string, ManualResetEvent>;
+            if (tuple == null)
+            {
+                printWithTime($"Sub thread id: {currThreadId()}, state: {currThreadState()}, parameter parse failed");
+            }
+            else
+            {
+                printWithTime($"Sub thread id: {currThreadId()}, state: {currThreadState()}, parameter: {tuple.Item1}");
+                //Thread.Sleep(2000);
+                tuple.Item2.Set();
+            }
+        }
+
+        #endregion Thread pool
+
+        #region AsyncResult
+
+        void AsyncResultTest()
+        {
+            printWithTime($"Main thread id: {currThreadId()}");
+            IAsyncResult result = printWithTime.BeginInvoke($"Dummy head, thread id: {currThreadId()}", asyncResult =>
+            {
+                printWithTime.EndInvoke(asyncResult);
+                printWithTime($"{asyncResult.AsyncState.ToString()}, thread id: {currThreadId()}");
+            }, "Dummy footer");
+            printWithTime($"Back to main thread id: {currThreadId()}");
+        }
+
+        #endregion AsyncResult
+
+        #region Delegates
 
         Action<Thread> startThenJoinAction = thread =>
         {
@@ -189,8 +240,16 @@ namespace TestDemo.FunctionTest
             thread.Join();
         };
 
+        Func<Thread> currThread = () => Thread.CurrentThread;
+
+        Func<int> currThreadId = () => Thread.CurrentThread.ManagedThreadId;
+
+        Func<string> currThreadName = () => Thread.CurrentThread.Name;
+
+        Func<string> currThreadState = () => Thread.CurrentThread.ThreadState.ToString();
+
         Action<string> printWithTime = text => Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} {text}");
 
-        #endregion Func and action
+        #endregion Delegates
     }
 }
