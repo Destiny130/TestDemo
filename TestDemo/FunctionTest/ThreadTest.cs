@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
+using System.Web;
 
 namespace TestDemo.FunctionTest
 {
@@ -23,7 +25,9 @@ namespace TestDemo.FunctionTest
 
             //ThreadPoolTest();
 
-            AsyncResultTest();
+            //AsyncResultTest();
+
+            //SimpleThreadPool();
 
             //Console.WriteLine($"ThreadTest end\n");
         }
@@ -161,29 +165,29 @@ namespace TestDemo.FunctionTest
 
         #endregion Thread interrupt
 
-        #region Thread suspend and resume
+        #region Thread suspend and resume, comment out now
 
-        void ThreadSuspendAndResume()
-        {
-            printWithTime(String.Empty);
-            Thread thread1 = new Thread(Suspend) { Name = "t1" };
-            Thread thread2 = new Thread(Suspend) { Name = "t2" };
-            thread1.Start();
-            thread2.Start();
-            Thread.Sleep(3000);
-            thread1.Resume();
-            thread2.Resume();
-            Console.WriteLine();
-        }
+        //void ThreadSuspendAndResume()
+        //{
+        //    printWithTime(String.Empty);
+        //    Thread thread1 = new Thread(Suspend) { Name = "t1" };
+        //    Thread thread2 = new Thread(Suspend) { Name = "t2" };
+        //    thread1.Start();
+        //    thread2.Start();
+        //    Thread.Sleep(3000);
+        //    thread1.Resume();
+        //    thread2.Resume();
+        //    Console.WriteLine();
+        //}
 
-        void Suspend()
-        {
-            printWithTime($"Thread {currThreadName()} has been suspended");
-            Thread.CurrentThread.Suspend();
-            printWithTime($"Thread {currThreadName()} has been resumed");
-        }
+        //void Suspend()
+        //{
+        //    printWithTime($"Thread {currThreadName()} has been suspended");
+        //    Thread.CurrentThread.Suspend();
+        //    printWithTime($"Thread {currThreadName()} has been resumed");
+        //}
 
-        #endregion Thread suspend and resume
+        #endregion Thread suspend and resume, comment out now
 
         #region Thread pool
 
@@ -232,24 +236,201 @@ namespace TestDemo.FunctionTest
 
         #endregion AsyncResult
 
+        #region Simple thread pool
+
+        void SimpleThreadPool()
+        {
+            TimeSpan sleepTime = TimeSpan.FromSeconds(2);
+            ThreadStart[] threadArray = new ThreadStart[]
+            {
+                () => printWithTimeAndSleep($"First\t current thread id: {currThreadId()}, state: {currThreadState()}", sleepTime),
+                () => printWithTime($"Second\t current thread id: {currThreadId()}, state: {currThreadState()}"),
+                () => printWithTimeAndSleep($"Thrid\t current thread id: {currThreadId()}, state: {currThreadState()}", sleepTime),
+                () => printWithTimeAndSleep($"Fourth\t current thread id: {currThreadId()}, state: {currThreadState()}", sleepTime),
+                () => printWithTimeAndSleep($"Fivth\t current thread id: {currThreadId()}, state: {currThreadState()}", sleepTime),
+                () => printWithTimeAndSleep($"Sixth\t current thread id: {currThreadId()}, state: {currThreadState()}", sleepTime),
+            };
+            SetMaxThreadNum(4);
+            QueueThread(threadArray);
+        }
+
+        #region Could be a class
+
+        static object locker = new object();
+        static Queue<ThreadStart> threadQueue = new Queue<ThreadStart>();
+        static HashSet<ThreadStart> threadSet = new HashSet<ThreadStart>();
+        static int maxThreadNum = 1;
+        static int minThreadNum = 0;
+
+        public static void SetMaxThreadNum(int max)
+        {
+            maxThreadNum = Math.Max(minThreadNum, max);
+        }
+
+        public static void SetMinThreadNum(int min)
+        {
+            minThreadNum = Math.Min(maxThreadNum, min);
+        }
+
+        public static void QueueThread(ThreadStart[] threadArray)
+        {
+            AddThreadsToPool(threadArray);
+            ExecuteThread();
+        }
+
+        static void ThreadEnqueue(ThreadStart thread)
+        {
+            lock (locker)
+            {
+                threadQueue.Enqueue(thread);
+            }
+        }
+
+        static void AddThreadsToPool(ThreadStart[] threadArray)
+        {
+            foreach (ThreadStart thread in threadArray)
+            {
+                ThreadEnqueue(thread);
+            }
+        }
+
+        static void ExecuteThread()
+        {
+            while (threadQueue.Count != 0)
+            {
+                if (threadSet.Count < maxThreadNum)
+                {
+                    ExecuteThreadInQueue();
+                }
+            }
+        }
+
+        static void ExecuteThreadInQueue()
+        {
+            lock (locker)
+            {
+                ExecuteThreadSingly(threadQueue.Dequeue());
+            }
+        }
+
+        static void ExecuteThreadSingly(ThreadStart thread)
+        {
+            threadSet.Add(thread);
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.DoWork += (sender, e) => thread.Invoke();
+            worker.RunWorkerCompleted += (sender, e) => threadSet.Remove(thread);
+            worker.RunWorkerAsync();
+        }
+
+        #endregion Could be a class
+
+        #endregion Simple thread pool
+
+        #region MyRegion
+
+
+
+        #endregion MyRegion
+
         #region Delegates
 
-        Action<Thread> startThenJoinAction = thread =>
+        public Action<Thread> startThenJoinAction = thread =>
         {
             thread.Start();
             thread.Join();
         };
 
-        Func<Thread> currThread = () => Thread.CurrentThread;
+        public Func<Thread> currThread = () => Thread.CurrentThread;
 
-        Func<int> currThreadId = () => Thread.CurrentThread.ManagedThreadId;
+        public Func<int> currThreadId = () => Thread.CurrentThread.ManagedThreadId;
 
-        Func<string> currThreadName = () => Thread.CurrentThread.Name;
+        public Func<string> currThreadName = () => Thread.CurrentThread.Name;
 
-        Func<string> currThreadState = () => Thread.CurrentThread.ThreadState.ToString();
+        public Func<string> currThreadState = () => Thread.CurrentThread.ThreadState.ToString();
 
-        Action<string> printWithTime = text => Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} {text}");
+        public Action<string> printWithTime = text => Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} {text}");
+
+        public Action<string, TimeSpan> printWithTimeAndSleep = (text, ts) =>
+        {
+            Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} {text}");
+            Thread.Sleep(ts);
+        };
 
         #endregion Delegates
+    }
+
+    public class HttpCounterResult : IHttpAsyncHandler
+    {
+        static int count = 0;
+        static object locker = new object();
+
+        public void ProcessRequest(HttpContext context)
+        {
+            Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} {nameof(ProcessRequest)}, thread id: {Thread.CurrentThread.ManagedThreadId}, state: {Thread.CurrentThread.ThreadState.ToString()}");
+        }
+
+        public bool IsReusable
+        {
+            get { return false; }
+        }
+
+        public IAsyncResult BeginProcessRequest(HttpContext context, AsyncCallback callback, object param)
+        {
+            Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} {nameof(BeginProcessRequest)}, thread id: {Thread.CurrentThread.ManagedThreadId}, state: {Thread.CurrentThread.ThreadState.ToString()}");
+            lock (locker)
+            {
+                ++count;
+            }
+            AsyncCounter result = new AsyncCounter(param, callback);
+            result.Display();
+            return result;
+        }
+
+        public void EndProcessRequest(IAsyncResult result)
+        {
+            Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} {nameof(EndProcessRequest)}, thread id: {Thread.CurrentThread.ManagedThreadId}, state: {Thread.CurrentThread.ThreadState.ToString()}");
+        }
+    }
+
+    public class AsyncCounter : IAsyncResult
+    {
+        object _param;
+        bool _asyncIsComplete;
+        AsyncCallback _callback;
+
+        public AsyncCounter(object param, AsyncCallback callback)
+        {
+            _param = param;
+            _callback = callback;
+        }
+
+        public object AsyncState
+        {
+            get { return _param; }
+        }
+
+        public WaitHandle AsyncWaitHandle
+        {
+            get { return null; }
+        }
+
+        public bool CompletedSynchronously
+        {
+            get { return false; }
+        }
+
+        public bool IsCompleted
+        {
+            get { return _asyncIsComplete; }
+        }
+
+        public void Display()
+        {
+            lock (this)
+            {
+                _asyncIsComplete = true;
+                _callback(this);
+            }
+        }
     }
 }
