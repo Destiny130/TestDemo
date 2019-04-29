@@ -29,6 +29,18 @@ namespace TestDemo.FunctionTest
 
             //SimpleThreadPool();
 
+            //VolatileTest();
+
+            //InterlockedTest();
+
+            //DeadLock();
+
+            //ReaderWriterLockTest();
+
+            //MonitorTest();  //??
+
+            AutoResetEventTest();
+
             //Console.WriteLine($"ThreadTest end\n");
         }
 
@@ -256,7 +268,7 @@ namespace TestDemo.FunctionTest
 
         #region Could be a class
 
-        static object locker = new object();
+        static object poolLocker = new object();
         static Queue<ThreadStart> threadQueue = new Queue<ThreadStart>();
         static HashSet<ThreadStart> threadSet = new HashSet<ThreadStart>();
         static int maxThreadNum = 1;
@@ -280,7 +292,7 @@ namespace TestDemo.FunctionTest
 
         static void ThreadEnqueue(ThreadStart thread)
         {
-            lock (locker)
+            lock (poolLocker)
             {
                 threadQueue.Enqueue(thread);
             }
@@ -307,7 +319,7 @@ namespace TestDemo.FunctionTest
 
         static void ExecuteThreadInQueue()
         {
-            lock (locker)
+            lock (poolLocker)
             {
                 ExecuteThreadSingly(threadQueue.Dequeue());
             }
@@ -331,6 +343,266 @@ namespace TestDemo.FunctionTest
 
 
         #endregion MyRegion
+
+        #region Volatile
+
+        //int volatileCount;
+        //int volatileValue;
+
+        volatile int volatileCount;
+        int volatileValue;
+
+        void VolatileTest()
+        {
+            new Thread(VolatileReadTest).Start();
+            for (int i = 0; i < 10; ++i)
+            {
+                Thread.Sleep(20);
+                new Thread(VolatileWriteTest).Start();
+            }
+        }
+
+        //void VolatileWriteTest()
+        //{
+        //    int temp = 0;
+        //    for (int i = 0; i < 10000000; ++i)
+        //    {
+        //        temp += 1;
+        //    }
+        //    volatileValue += temp;
+        //    Thread.VolatileWrite(ref volatileCount, 1);
+        //}
+
+        //void VolatileReadTest()
+        //{
+        //    while (true)
+        //    {
+        //        if (Thread.VolatileRead(ref volatileCount) > 0)
+        //        {
+        //            printWithTime($"Thread {currThreadId()} count: {volatileValue}");
+        //            volatileCount = 0;
+        //        }
+        //    }
+        //}
+
+        void VolatileWriteTest()
+        {
+            int temp = 0;
+            for (int i = 0; i < 10000000; ++i)
+            {
+                temp += 1;
+            }
+            volatileValue += temp;
+            volatileCount = 1;
+        }
+
+        void VolatileReadTest()
+        {
+            while (true)
+            {
+                if (volatileCount == 1)
+                {
+                    printWithTime($"Thread {currThreadId()} count: {volatileValue}");
+                    volatileCount = 0;
+                }
+            }
+        }
+
+        #endregion Volatile
+
+        #region Interlocked
+
+        long interlockedCount = 0;
+
+        void InterlockedTest()
+        {
+            for (int i = 0; i < 20; ++i)
+            {
+                new Thread(InterlockedIncr).Start();
+                //Thread.Sleep(20);
+                new Thread(InterlockedDecr).Start();
+                //Thread.Sleep(20);
+            }
+
+            Thread.Sleep(100);
+            Interlocked.Add(ref interlockedCount, 125);
+            printWithTime($"After add {125}, count: {interlockedCount}");
+            Interlocked.Exchange(ref interlockedCount, 5874);
+            printWithTime($"After exchange to {5874}, count: {interlockedCount}");
+        }
+
+        void InterlockedIncr()
+        {
+            //if (Interlocked.Read(ref interlockedCount) == 0)
+            //{
+            printWithTime($"Thread {currThreadId()} enter increment area");
+            Interlocked.Increment(ref interlockedCount);
+            printWithTime($"Count is: {Interlocked.Read(ref interlockedCount)}");
+            //}
+        }
+
+        void InterlockedDecr()
+        {
+            //if (Interlocked.Read(ref interlockedCount) == 1)
+            //{
+            printWithTime($"Thread {currThreadId()} enter decrement area");
+            Interlocked.Decrement(ref interlockedCount);
+            printWithTime($"Count is: {Interlocked.Read(ref interlockedCount)}\n");
+            //}
+        }
+
+        #endregion Interlocked
+
+        #region Dead lock
+
+        void DeadLock()
+        {
+            LockAnotherClass lockAnother = new LockAnotherClass();
+        }
+
+        #endregion Dead lock
+
+        #region ReaderWriterLock
+
+        ReaderWriterLock rwLock = new ReaderWriterLock();
+        List<string> strList;
+
+        void ReaderWriterLockTest()
+        {
+            strList = new List<string>() { "zhao", "qian" };
+            for (int i = 0; i < 5; ++i)
+            {
+                if (i < 2)
+                {
+                    new Thread(AcquireWriter).Start($"sun{i.ToString()}");
+                    //new Thread(AcquireWriter).Start();
+                }
+                else
+                {
+                    new Thread(AcquireReader).Start();
+                }
+                //Thread.Sleep(20);
+            }
+        }
+
+        void AcquireWriter(object obj)
+        {
+            if (!(obj is string))
+                return;
+            try
+            {
+                Thread.Sleep(20);
+                rwLock.AcquireWriterLock(Timeout.Infinite);
+                strList.Add(obj.ToString());
+                printWithTime($"Write thread {currThreadId()}, wrote: {obj.ToString()}");
+            }
+            catch (Exception ex)
+            {
+                printWithTime($"{nameof(AcquireWriter)} {nameof(Exception)}: {ex.Message}");
+            }
+            finally
+            {
+                rwLock.ReleaseWriterLock();
+            }
+        }
+
+        void AcquireReader()
+        {
+            try
+            {
+                rwLock.AcquireReaderLock(Timeout.Infinite);
+                //printWithTime($"Read thread {currThreadId()}, list count: {strList.Count},last names: {String.Join(", ", strList)}");
+                strList.ForEach(str =>
+                {
+                    printWithTime($"Read thread {currThreadId()}, list count: {strList.Count},last name: {str}");
+                    Thread.Sleep(20);
+                });
+            }
+            catch (Exception ex)
+            {
+                printWithTime($"{nameof(AcquireReader)} {nameof(Exception)}: {ex.Message}");
+            }
+            finally
+            {
+                rwLock.ReleaseReaderLock();
+            }
+        }
+
+        #endregion ReaderWriterLock
+
+        #region Monitor
+
+        object monitorLocker = new object();
+
+        void MonitorTest()
+        {
+            new Thread(MonitorWriter).Start();
+            new Thread(MonitorWriter).Start();
+            new Thread(MonitorReader).Start();
+            new Thread(MonitorReader).Start();
+        }
+
+        void MonitorWriter()
+        {
+            while (true)
+            {
+                Thread.Sleep(1000);
+                Monitor.Enter(monitorLocker);
+                printWithTime($"Thread {currThreadId()} change data");
+                Thread.Sleep(1000);
+                Monitor.Pulse(monitorLocker);
+                Monitor.Exit(monitorLocker);
+            }
+        }
+
+        void MonitorReader()
+        {
+            while (true)
+            {
+                Monitor.Enter(monitorLocker);
+                Monitor.Wait(monitorLocker, 4 * 1000);
+                printWithTime($"Thread {currThreadId()} read data");
+                Thread.Sleep(1000);
+                Monitor.Exit(monitorLocker);
+            }
+        }
+
+        #endregion Monitor
+
+        #region AutoResetEvent
+
+        void AutoResetEventTest()
+        {
+            string str = "ABCDEFGHIJKLMNOPQ";
+            List<Action> list = new List<Action>();
+            foreach (char c in str)
+            {
+                list.Add(() => printWithTime($"Thread {currThreadId()} {c}"));
+            }
+            InvokeActionList(list);
+        }
+
+        void InvokeActionList(List<Action> actionList)
+        {
+            if (actionList == null || actionList.Count == 0)
+                return;
+            WaitHandle[] waitHandleArray = Enumerable.Range(0, actionList.Count).Select(i =>
+            {
+                WaitHandle waitHandle = new AutoResetEvent(false);
+                ThreadPool.QueueUserWorkItem(handle =>
+                {
+                    actionList[i]();
+                    Thread.Sleep(new Random().Next(1000, 10 * 1000));
+                    //Thread.Sleep(30 * 1000);
+                    (waitHandle as AutoResetEvent).Set();
+                }, waitHandle);
+                return waitHandle;
+            }).ToArray();
+            WaitHandle.WaitAll(waitHandleArray);
+            printWithTime($"Back to main thread {currThreadId()}");
+        }
+
+        #endregion AutoResetEvent
 
         #region Delegates
 
@@ -430,6 +702,39 @@ namespace TestDemo.FunctionTest
             {
                 _asyncIsComplete = true;
                 _callback(this);
+            }
+        }
+    }
+
+    public class LockMyself
+    {
+        public LockMyself()
+        {
+            new Thread(() =>
+            {
+                while (true)
+                {
+                    lock (this)
+                    {
+                        Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} enter {nameof(LockMyself)} sharing area");
+                        Thread.Sleep(3 * 1000);
+                    }
+                }
+            }).Start();
+        }
+    }
+
+    public class LockAnotherClass
+    {
+        public LockAnotherClass()
+        {
+            LockMyself lockMyself = new LockMyself();
+            //Thread.Sleep(100);
+            lock (lockMyself)
+            {
+                Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} Now I locked LockMyself");
+                Timer timer = new Timer((obj) => Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff}"), this, 0, 1000);
+                Thread.Sleep(10 * 1000);
             }
         }
     }
