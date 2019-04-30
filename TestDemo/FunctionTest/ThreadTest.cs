@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Threading;
 using System.Web;
 
@@ -39,7 +40,9 @@ namespace TestDemo.FunctionTest
 
             //MonitorTest();  //??
 
-            AutoResetEventTest();
+            //AutoResetEventTest();
+
+            //MutexTest();
 
             //Console.WriteLine($"ThreadTest end\n");
         }
@@ -603,6 +606,58 @@ namespace TestDemo.FunctionTest
         }
 
         #endregion AutoResetEvent
+
+        #region Mutex
+
+        static char[] mutexSourceArray = "abcdefghijk".ToCharArray();
+        static char[] mutexDesArray = new char[mutexSourceArray.Length];
+        Mutex mutex = new Mutex(false, "MMM");
+
+        void MutexTest()
+        {
+            try
+            {
+                Mutex dummy = Mutex.OpenExisting("dummyMutex", MutexRights.FullControl);
+            }
+            catch (WaitHandleCannotBeOpenedException openEx)
+            {
+                printWithTime($"Mutex dummy doesn't exist, exception: {openEx.Message}\n");
+            }
+
+            for (int i = 0; i < mutexSourceArray.Length; ++i)
+            {
+                ThreadPool.QueueUserWorkItem(MutexHandle);
+            }
+            Thread.Sleep(2 * 1000);
+            printWithTime($"Back to main thread {currThreadId()}, {nameof(mutexSourceArray)}: {String.Join(String.Empty, mutexSourceArray)}");
+
+        }
+
+        void MutexHandle(object obj = null)
+        {
+            mutex.WaitOne();
+            try
+            {
+                if (mutexSourceArray.Length > 0)
+                {
+                    Array.Copy(mutexSourceArray, 0, mutexDesArray, mutexDesArray.Length - mutexSourceArray.Length, 1);
+                    printWithTime($"Thread {currThreadId()} the chart {mutexSourceArray[0]} will insert into {nameof(mutexDesArray)}, the string changed from {nameof(mutexDesArray)} {String.Join(String.Empty, mutexDesArray)}");
+                    char[] temp = new char[mutexSourceArray.Length - 1];
+                    Array.Copy(mutexSourceArray, 1, temp, 0, mutexSourceArray.Length - 1);
+                    mutexSourceArray = temp;
+                }
+            }
+            catch (Exception ex)
+            {
+                printWithTime($"MutexHandle Exception: {ex.Message}");
+            }
+            finally
+            {
+                mutex.ReleaseMutex();
+            }
+        }
+
+        #endregion Mutex
 
         #region Delegates
 
