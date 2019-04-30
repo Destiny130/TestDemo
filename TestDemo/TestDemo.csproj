@@ -80,6 +80,7 @@
     <Compile Include="FunctionTest\ForeachTest.cs" />
     <Compile Include="FunctionTest\GetEnumeratorTest.cs" />
     <Compile Include="FunctionTest\GetHashCodeTest.cs" />
+    <Compile Include="FunctionTest\StreamTest.cs" />
     <Compile Include="FunctionTest\ThreadTest.cs" />
     <Compile Include="FunctionTest\TupleTest.cs" />
     <Compile Include="FunctionTest\XmlWriteWithMemoryStream.cs" />
