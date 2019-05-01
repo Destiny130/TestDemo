@@ -73,6 +73,7 @@
     <Compile Include="EfficiencyTest\SubstringAndNewStringFromCharArray.cs" />
     <Compile Include="EfficiencyTest\ToCharArrayAndElementAt.cs" />
     <Compile Include="Execute.cs" />
+    <Compile Include="FunctionTest\Help\AsyncCounter.cs" />
     <Compile Include="FunctionTest\AsyncExecute.cs" />
     <Compile Include="FunctionTest\AsyncForm.cs">
       <SubType>Form</SubType>
@@ -80,6 +81,9 @@
     <Compile Include="FunctionTest\ForeachTest.cs" />
     <Compile Include="FunctionTest\GetEnumeratorTest.cs" />
     <Compile Include="FunctionTest\GetHashCodeTest.cs" />
+    <Compile Include="FunctionTest\Help\HttpCounterResult.cs" />
+    <Compile Include="FunctionTest\Help\LockAnotherClass.cs" />
+    <Compile Include="FunctionTest\Help\LockMyself.cs" />
     <Compile Include="FunctionTest\StreamTest.cs" />
     <Compile Include="FunctionTest\ThreadTest.cs" />
     <Compile Include="FunctionTest\TupleTest.cs" />

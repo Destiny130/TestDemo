@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Threading;
-using System.Web;
+using TestDemo.FunctionTest.Help;
 
 namespace TestDemo.FunctionTest
 {
@@ -684,113 +684,5 @@ namespace TestDemo.FunctionTest
         };
 
         #endregion Delegates
-    }
-
-    public class HttpCounterResult : IHttpAsyncHandler
-    {
-        static int count = 0;
-        static object locker = new object();
-
-        public void ProcessRequest(HttpContext context)
-        {
-            Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} {nameof(ProcessRequest)}, thread id: {Thread.CurrentThread.ManagedThreadId}, state: {Thread.CurrentThread.ThreadState.ToString()}");
-        }
-
-        public bool IsReusable
-        {
-            get { return false; }
-        }
-
-        public IAsyncResult BeginProcessRequest(HttpContext context, AsyncCallback callback, object param)
-        {
-            Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} {nameof(BeginProcessRequest)}, thread id: {Thread.CurrentThread.ManagedThreadId}, state: {Thread.CurrentThread.ThreadState.ToString()}");
-            lock (locker)
-            {
-                ++count;
-            }
-            AsyncCounter result = new AsyncCounter(param, callback);
-            result.Display();
-            return result;
-        }
-
-        public void EndProcessRequest(IAsyncResult result)
-        {
-            Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} {nameof(EndProcessRequest)}, thread id: {Thread.CurrentThread.ManagedThreadId}, state: {Thread.CurrentThread.ThreadState.ToString()}");
-        }
-    }
-
-    public class AsyncCounter : IAsyncResult
-    {
-        object _param;
-        bool _asyncIsComplete;
-        AsyncCallback _callback;
-
-        public AsyncCounter(object param, AsyncCallback callback)
-        {
-            _param = param;
-            _callback = callback;
-        }
-
-        public object AsyncState
-        {
-            get { return _param; }
-        }
-
-        public WaitHandle AsyncWaitHandle
-        {
-            get { return null; }
-        }
-
-        public bool CompletedSynchronously
-        {
-            get { return false; }
-        }
-
-        public bool IsCompleted
-        {
-            get { return _asyncIsComplete; }
-        }
-
-        public void Display()
-        {
-            lock (this)
-            {
-                _asyncIsComplete = true;
-                _callback(this);
-            }
-        }
-    }
-
-    public class LockMyself
-    {
-        public LockMyself()
-        {
-            new Thread(() =>
-            {
-                while (true)
-                {
-                    lock (this)
-                    {
-                        Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} enter {nameof(LockMyself)} sharing area");
-                        Thread.Sleep(3 * 1000);
-                    }
-                }
-            }).Start();
-        }
-    }
-
-    public class LockAnotherClass
-    {
-        public LockAnotherClass()
-        {
-            LockMyself lockMyself = new LockMyself();
-            //Thread.Sleep(100);
-            lock (lockMyself)
-            {
-                Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} Now I locked LockMyself");
-                Timer timer = new Timer((obj) => Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff}"), this, 0, 1000);
-                Thread.Sleep(10 * 1000);
-            }
-        }
     }
 }
