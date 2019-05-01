@@ -271,7 +271,7 @@ namespace TestDemo.FunctionTest
 
         #region Could be a class
 
-        static object poolLocker = new object();
+        static readonly object poolLocker = new object();
         static Queue<ThreadStart> threadQueue = new Queue<ThreadStart>();
         static HashSet<ThreadStart> threadSet = new HashSet<ThreadStart>();
         static int maxThreadNum = 1;
@@ -491,7 +491,10 @@ namespace TestDemo.FunctionTest
         void AcquireWriter(object obj)
         {
             if (!(obj is string))
+            {
                 return;
+            }
+
             try
             {
                 Thread.Sleep(20);
@@ -535,7 +538,7 @@ namespace TestDemo.FunctionTest
 
         #region Monitor
 
-        object monitorLocker = new object();
+        readonly object monitorLocker = new object();
 
         void MonitorTest()
         {
@@ -588,7 +591,10 @@ namespace TestDemo.FunctionTest
         void InvokeActionList(List<Action> actionList)
         {
             if (actionList == null || actionList.Count == 0)
+            {
                 return;
+            }
+
             WaitHandle[] waitHandleArray = Enumerable.Range(0, actionList.Count).Select(i =>
             {
                 WaitHandle waitHandle = new AutoResetEvent(false);
