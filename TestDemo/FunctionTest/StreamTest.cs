@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
+using System.Text;
 
 namespace TestDemo.FunctionTest
 {
@@ -12,8 +9,6 @@ namespace TestDemo.FunctionTest
         public void Start()
         {
             SimpleExample();
-
-
 
         }
 
@@ -61,7 +56,7 @@ namespace TestDemo.FunctionTest
 
         #region Delegates
 
-        Action<string> print = str => Console.WriteLine(str);
+        readonly Action<string> print = str => Console.WriteLine(str);
 
         #endregion Delegates
     }
