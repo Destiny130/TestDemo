@@ -1,6 +1,6 @@
 using System;
-using System.IO;
 using System.Text;
+using System.IO;
 
 namespace TestDemo.FunctionTest
 {
@@ -8,8 +8,9 @@ namespace TestDemo.FunctionTest
     {
         public void Start()
         {
-            SimpleExample();
+            //SimpleExample();
 
+            TextReaderTest();
         }
 
         #region Stream simple example
@@ -21,7 +22,7 @@ namespace TestDemo.FunctionTest
 
             using (MemoryStream ms = new MemoryStream())
             {
-                print($"Original string is: {srcStr}");
+                print($"Original string is:\t{srcStr}");
                 if (ms.CanWrite)
                 {
                     //Write source string into memory stream
@@ -46,7 +47,7 @@ namespace TestDemo.FunctionTest
                     {
                         dstStr += readCharArr[i];
                     }
-                    print($"Read string is: {dstStr}");
+                    print($"Read string is:\t\t{dstStr}");
                 }
                 ms.Close();
             }
@@ -54,9 +55,27 @@ namespace TestDemo.FunctionTest
 
         #endregion Stream simple example
 
+        #region TextReader test
+
+        void TextReaderTest()
+        {
+            string str = "abc\nefg";
+            using (TextReader reader = new StringReader(str))
+            {
+                while(reader.Peek() != -1)
+                {
+                    print($"Peek: {(char)reader.Peek()}");
+                    print($"Read: {(char)reader.Read()}");
+                }
+                reader.Close();
+            }
+        }
+
+        #endregion TextReader test
+
         #region Delegates
 
-        readonly Action<string> print = str => Console.WriteLine(str);
+        Action<string> print = str => Console.WriteLine(str);
 
         #endregion Delegates
     }
