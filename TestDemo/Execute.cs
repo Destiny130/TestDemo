@@ -18,7 +18,8 @@ namespace TestDemo
             //Application.Run(new AsyncForm());
             //new AsyncExecute().Execute();
             //new XmlWriteWithMemoryStream().Execute();
-            new ThreadTest().Start();
+            //new ThreadTest().Start();
+            new StreamTest().Start();
 
             #endregion
 
