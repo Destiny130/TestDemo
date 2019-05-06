@@ -59,15 +59,26 @@ namespace TestDemo.FunctionTest
 
         void TextReaderTest()
         {
-            string str = "abc\nefg";
+            string str = "abc\ndefg";
             using (TextReader reader = new StringReader(str))
             {
-                while(reader.Peek() != -1)
+                while (reader.Peek() != -1)
                 {
                     print($"Peek: {(char)reader.Peek()}");
                     print($"Read: {(char)reader.Read()}");
                 }
-                reader.Close();
+            }
+
+            using (TextReader reader = new StringReader(str))
+            {
+                string lineData = reader.ReadLine();
+                print($"\nFirst line is: {lineData}");
+            }
+
+            using (TextReader reader = new StringReader(str))
+            {
+                string allData = reader.ReadToEnd();
+                print($"\nAll data is: {allData}");
             }
         }
 
