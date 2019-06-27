@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 
 namespace TestDemo.FunctionTest
 {
@@ -15,7 +17,7 @@ namespace TestDemo.FunctionTest
             //{
             //    list[i] = (i * 10).ToString();
             //}
-            //If uncomment out above modify for loop, below while sentence will throw an exception. Because for loop modify list members value which changed list version
+            //If uncomment out above modify for loop sentences, below MoveNext() method will throw an exception. Because for loop modify list members value which changed list version
             while (stringEnum.MoveNext())
             {
                 Print($"{stringEnum.Current}\t");
@@ -76,6 +78,23 @@ namespace TestDemo.FunctionTest
             Id = id;
             Name = name;
         }
+
+        public static bool operator ==(Test left, Test right)
+        {
+            //int threadId = Thread.CurrentThread.ManagedThreadId;
+            //return ReferenceEquals(left, right);
+            return (left != null && right != null) ? (left.Id == right.Id && left.Name == right.Name) : false;
+        }
+
+        public static bool operator !=(Test left, Test right)
+        {
+            //int threadId = Thread.CurrentThread.ManagedThreadId;
+            return !(left == right);
+        }
+
+        public override bool Equals(object obj) => base.Equals(obj);
+
+        public override int GetHashCode() => base.GetHashCode();
 
         public override string ToString()
         {
