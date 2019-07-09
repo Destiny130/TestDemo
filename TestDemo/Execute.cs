@@ -20,7 +20,9 @@ namespace TestDemo
             //new XmlWriteWithMemoryStream().Execute();
             //new ThreadTest().Start();
             //new StreamTest().Start();
-            new GetEnumeratorTest().Execute();
+            //new GetEnumeratorTest().Execute();
+            //new TryCatchTest().Execute();
+            new StringInterningTest().Execute();
 
             #endregion
 
