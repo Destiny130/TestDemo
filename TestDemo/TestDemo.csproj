@@ -85,7 +85,9 @@
     <Compile Include="FunctionTest\Help\LockAnotherClass.cs" />
     <Compile Include="FunctionTest\Help\LockMyself.cs" />
     <Compile Include="FunctionTest\StreamTest.cs" />
+    <Compile Include="FunctionTest\StringInterningTest.cs" />
     <Compile Include="FunctionTest\ThreadTest.cs" />
+    <Compile Include="FunctionTest\TryCatchTest.cs" />
     <Compile Include="FunctionTest\TupleTest.cs" />
     <Compile Include="FunctionTest\XmlWriteWithMemoryStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
